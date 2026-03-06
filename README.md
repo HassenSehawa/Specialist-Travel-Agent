@@ -23,7 +23,7 @@ This system is designed for a specialist travel agent to manage **Client**, **Fl
 ### Installation
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone <https://github.com/HassenSehawa/Specialist-Travel-Agent.git>
     ```
 
 2.  **Create a Virtual Environment (Recommended):**
