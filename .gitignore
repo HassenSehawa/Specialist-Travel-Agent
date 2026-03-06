@@ -1,0 +1,15 @@
+# Virtual environment
+venv/
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local data (not versioned)
+src/record/record.jsonl
+
+# macOS
+.DS_Store
+
+
