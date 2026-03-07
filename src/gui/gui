@@ -24,12 +24,21 @@ class DataManagerApp:
         self.root.geometry("1200x600")
         # Change path based on your system, need to resolve to make portable.
         self.path = r"C:\Users\jd000207\MyCode10\psnl\Group Project\src\record"
-        # Initialize Tables
-        self.tables = {
-            "Clients": ClientTable().from_pickle(os.path.join(self.path, "Clients")),
-            "Airlines": AirlineTable().from_pickle(os.path.join(self.path, "Airlines")),
-            "Flights": FlightTable().from_pickle(os.path.join(self.path, "Flights"))
-        }
+        try:
+            # Read Data if there
+            self.tables = {
+                "Clients": ClientTable().from_pickle(os.path.join(self.path, "Clients")),
+                "Airlines": AirlineTable().from_pickle(os.path.join(self.path, "Airlines")),
+                "Flights": FlightTable().from_pickle(os.path.join(self.path, "Flights"))
+            }
+
+        except FileNotFoundError:
+            # Intialise tables if not present
+            self.tables = {
+                "Clients": ClientTable(),
+                "Airlines": AirlineTable(),
+                "Flights": FlightTable()
+            }
 
         self.setup_ui()
 
