@@ -11,6 +11,7 @@ import sys
 sys.path.append('../')
 
 # Below to make it work on my system. 
+# Need to have a look at imports to make sure configured properly. 
 import os
 # os.chdir(r"C:\Users\jd000207\MyCode10\psnl\Group Project\src") src.
 
