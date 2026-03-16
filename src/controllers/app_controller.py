@@ -76,9 +76,9 @@ class AppController:
 
         if name == "Flights":
             self.view.open_flight_window("Add Flight Record", self._airline_options(),
-                                         table.fields, {}, on_save)
+                                         table.fields, {}, on_save, table.required_fields)
         else:
-            self.view.open_add_window(name, table.fields, on_save)
+            self.view.open_add_window(name, table.fields, on_save, table.required_fields)
 
     def update_record(self):
         record_id = self.view.get_selected_id()
@@ -99,9 +99,9 @@ class AppController:
 
         if name == "Flights":
             self.view.open_flight_window("Update Flight Record", self._airline_options(),
-                                         table.fields, record, on_update)
+                                         table.fields, record, on_update, table.required_fields)
         else:
-            self.view.open_update_window(name, table.fields, record, on_update)
+            self.view.open_update_window(name, table.fields, record, on_update, table.required_fields)
 
     def delete_record(self):
         selected = self.view.tree.selection()

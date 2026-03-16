@@ -13,7 +13,8 @@ class BaseTable:
     """Shared CRUD and persistence logic for all record tables."""
 
     record_type: str = ""
-    fields: list[str] = []  # editable fields, excludes auto-generated id and type
+    fields: list[str] = []          # editable fields, excludes auto-generated id and type
+    required_fields: list[str] = [] # fields that must not be empty
 
     def __init__(self):
         self.records: list[dict] = []
@@ -88,10 +89,21 @@ class ClientTable(BaseTable):
     record_type = "Client"
     fields = ["name", "address_line_1", "address_line_2", "address_line_3",
               "city", "state", "zip_code", "country", "phone_number"]
+    required_fields = ["name", "city", "country", "phone_number"]
 
     def add_record(self, name: str, address_line_1: str, address_line_2: str,
                    address_line_3: str, city: str, state: str, zip_code: str,
                    country: str, phone_number: str) -> dict:
+        if not name.strip():
+            raise ValueError("Name is required.")
+        if not city.strip():
+            raise ValueError("City is required.")
+        if not country.strip():
+            raise ValueError("Country is required.")
+        if not phone_number.strip():
+            raise ValueError("Phone number is required.")
+        if not phone_number.strip().replace("+", "").replace(" ", "").isdigit():
+            raise ValueError("Phone number must contain digits only.")
         return super().add_record(
             name=name,
             address_line_1=address_line_1,
@@ -108,8 +120,11 @@ class ClientTable(BaseTable):
 class AirlineTable(BaseTable):
     record_type = "Airline"
     fields = ["company_name"]
+    required_fields = ["company_name"]
 
     def add_record(self, company_name: str) -> dict:
+        if not company_name.strip():
+            raise ValueError("Company name is required.")
         return super().add_record(company_name=company_name)
 
 
@@ -117,9 +132,19 @@ class FlightTable(BaseTable):
     record_type = "Flight"
     DATE_FORMAT = "%Y-%m-%d"
     fields = ["airline_id", "date", "start_city", "end_city"]
+    required_fields = ["airline_id", "date", "start_city", "end_city"]
 
     def add_record(self, airline_id: int, date: str, start_city: str, end_city: str) -> dict:
-        datetime.strptime(date, self.DATE_FORMAT)  # validate date format
+        if not isinstance(airline_id, int):
+            raise ValueError("Airline ID must be a number.")
+        if not start_city.strip():
+            raise ValueError("Start city is required.")
+        if not end_city.strip():
+            raise ValueError("End city is required.")
+        try:
+            datetime.strptime(date, self.DATE_FORMAT)
+        except ValueError:
+            raise ValueError(f"Date must be in {self.DATE_FORMAT} format.")
         return super().add_record(
             airline_id=airline_id,
             date=date,
