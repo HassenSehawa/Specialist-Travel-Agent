@@ -1,14 +1,22 @@
-from gui.gui import DataManagerApp
+"""
+Entry point.
+Initialises the tkinter window, wires up the MVC components,
+and saves data to disk when the application is closed.
+"""
 import tkinter as tk
 import os
+import sys
 
-# os.chdir(r"C:\Users\jd000207\MyCode10\psnl\Group Project\src") #src.
+# Ensure src/ is on the path when running from any directory
+sys.path.insert(0, os.path.dirname(__file__))
+
+from views.app_view import AppView
+from controllers.app_controller import AppController
+
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = DataManagerApp(root)
+    view = AppView(root, ["Clients", "Airlines", "Flights"])
+    controller = AppController(view)
+    root.protocol("WM_DELETE_WINDOW", lambda: (controller.save_all(), root.destroy()))
     root.mainloop()
-    for name, table in app.tables.items():
-        # Need to change to relative path to make more portable.  
-        path = r"C:\Users\jd000207\MyCode10\psnl\Group Project\src\record"
-        table.to_pickle(os.path.join(path, name))

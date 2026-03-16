@@ -1,5 +1,5 @@
 """
-Data models for the Specialist Travel Agent record management system.
+Data models.
 Each table stores records internally as a list of dictionaries and
 persists data to the file system as JSONL (JSON Lines).
 """
@@ -13,11 +13,13 @@ class BaseTable:
     """Shared CRUD and persistence logic for all record tables."""
 
     record_type: str = ""
+    fields: list[str] = []  # editable fields, excludes auto-generated id and type
 
     def __init__(self):
         self.records: list[dict] = []
 
     def _next_id(self) -> int:
+        """Returns the next available ID (max existing ID + 1)."""
         if not self.records:
             return 1
         return max(r["id"] for r in self.records) + 1
@@ -84,6 +86,8 @@ class BaseTable:
 
 class ClientTable(BaseTable):
     record_type = "Client"
+    fields = ["name", "address_line_1", "address_line_2", "address_line_3",
+              "city", "state", "zip_code", "country", "phone_number"]
 
     def add_record(self, name: str, address_line_1: str, address_line_2: str,
                    address_line_3: str, city: str, state: str, zip_code: str,
@@ -103,6 +107,7 @@ class ClientTable(BaseTable):
 
 class AirlineTable(BaseTable):
     record_type = "Airline"
+    fields = ["company_name"]
 
     def add_record(self, company_name: str) -> dict:
         return super().add_record(company_name=company_name)
@@ -111,6 +116,7 @@ class AirlineTable(BaseTable):
 class FlightTable(BaseTable):
     record_type = "Flight"
     DATE_FORMAT = "%Y/%m/%d %H:%M:%S"
+    fields = ["airline_id", "date", "start_city", "end_city"]
 
     def add_record(self, airline_id: int, date: str, start_city: str, end_city: str) -> dict:
         datetime.strptime(date, self.DATE_FORMAT)  # validate date format

@@ -1,26 +1,38 @@
 # Specialist Travel Agent - Record Management System
 
 ## Project Overview
-This system is designed for a specialist travel agent to manage **Client**, **Flight**, and **Airline** records. It features a Graphical User Interface (GUI) for CRUD operations (Create, Read, Update, Delete) and ensures data persistence using a structured file system (JSON/Binary).
+A desktop application for a specialist travel agent to manage **Client**, **Flight**, and **Airline** records. It features a Graphical User Interface (GUI) for CRUD operations (Create, Read, Update, Delete) and persists data using JSONL files.
 
 
 ## Project Structure
-* **`src/`**: Contains the core application logic, GUI, and record management.
-* **`tests/`**: Unit tests for every module.
+The application follows the **MVC (Model-View-Controller)** pattern:
+```
+src/
+├── main.py                  # Entry point
+├── models/
+│   └── tables.py            # Model
+├── views/
+│   └── app_view.py          # View
+├── controllers/
+│   └── app_controller.py    # Controller
+└── record/                  # JSONL data files
 
-## 👥 Team Roles
+tests/                       # Unit tests
+```
+
+## Team Roles
 * **Programmer**: Heba, Jack, Hassen
 * **GUI / UX Designer**:  Yusuf, Hassen
 * **Tester**: Golda, Sophie
 * **Source Control Lead**: Hassen
 
 
-### Prerequisites
+## Prerequisites
 * **Python Version:** 3.10 or higher
 * **Git:** For version control
 
 
-### Installation
+## Installation
 1.  **Clone the repository:**
     ```bash
     git clone <https://github.com/HassenSehawa/Specialist-Travel-Agent.git>
@@ -39,14 +51,17 @@ This system is designed for a specialist travel agent to manage **Client**, **Fl
     venv\Scripts\activate
     ```
 
-## How to run 
-
-    python src/main.py
+## How to Run
+```bash
+cd src
+python main.py
+```
 
 ## Commit Guidelines
 Every commit message must be descriptive and follow the format:
 * `feat: ...` for new features.
 * `fix: ...` for bug fixes.
+* `refactor: ...` for code restructuring.
 * `test: ...` for adding/updating tests.
 * `docs: ...` for documentation changes.
 
@@ -61,11 +76,11 @@ We use a **Branch-per-Feature** workflow. **Never commit directly to `main`.**
     `git push origin feat-data-model`
 4. **Open a Pull Request** on GitHub.
 
-### PR Rules:
+## PR Rules
 * **Review:** At least one other team member (or the Source Control lead) must review the code.
 * **No Conflicts:** Merge `main` into your branch (`git merge main`) to resolve conflicts locally before pushing.
 
 
 ## Data Management
-Records are stored internally as a list of dictionaries. On exit, the system saves data to the file system. The system automatically checks for existing records upon startup.
+Records are stored internally as a list of dictionaries and persisted as JSONL files in `src/record/`. Data is saved on application close and loaded automatically on startup.
 

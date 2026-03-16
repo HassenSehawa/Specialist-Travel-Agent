@@ -7,7 +7,7 @@ __pycache__/
 *.py[cod]
 
 # Local data (not versioned)
-src/record/record.jsonl
+src/record/*.jsonl
 
 # macOS
 .DS_Store
