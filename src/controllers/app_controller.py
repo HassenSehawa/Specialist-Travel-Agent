@@ -58,21 +58,27 @@ class AppController:
         self.view.display_records(table.records, table.fields)
         self.view.update_search_columns(table.fields)
 
+    def _airline_options(self) -> list[str]:
+        """Returns a list of airline display strings for the flight dropdown."""
+        return [f"{a['id']} - {a['company_name']}" for a in self.tables["Airlines"].records]
+
     def add_record(self):
         name = self._current_table_name()
         table = self._current_table()
 
         def on_save(data: dict, win):
             try:
-                if name == "Flights":
-                    data["airline_id"] = int(data["airline_id"])
                 table.add_record(**data)
                 self.refresh()
                 win.destroy()
             except Exception as e:
                 self.view.show_error(f"Failed to add record: {e}")
 
-        self.view.open_add_window(name, table.fields, on_save)
+        if name == "Flights":
+            self.view.open_flight_window("Add Flight Record", self._airline_options(),
+                                         table.fields, {}, on_save)
+        else:
+            self.view.open_add_window(name, table.fields, on_save)
 
     def update_record(self):
         record_id = self.view.get_selected_id()
@@ -85,15 +91,17 @@ class AppController:
 
         def on_update(data: dict, win):
             try:
-                if name == "Flights":
-                    data["airline_id"] = int(data["airline_id"])
                 table.update_record(record_id, **data)
                 self.refresh()
                 win.destroy()
             except Exception as e:
                 self.view.show_error(f"Failed to update record: {e}")
 
-        self.view.open_update_window(name, table.fields, record, on_update)
+        if name == "Flights":
+            self.view.open_flight_window("Update Flight Record", self._airline_options(),
+                                         table.fields, record, on_update)
+        else:
+            self.view.open_update_window(name, table.fields, record, on_update)
 
     def delete_record(self):
         selected = self.view.tree.selection()

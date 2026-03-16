@@ -115,7 +115,7 @@ class AirlineTable(BaseTable):
 
 class FlightTable(BaseTable):
     record_type = "Flight"
-    DATE_FORMAT = "%Y/%m/%d %H:%M:%S"
+    DATE_FORMAT = "%Y-%m-%d"
     fields = ["airline_id", "date", "start_city", "end_city"]
 
     def add_record(self, airline_id: int, date: str, start_city: str, end_city: str) -> dict:

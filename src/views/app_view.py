@@ -133,6 +133,7 @@ class AppView:
                 self.search_results.insert(tk.END, str(record) + "\n\n")
 
     def open_add_window(self, table_name: str, fields: list[str], on_save):
+        """Opens a dialog window for adding a new record."""
         win = tk.Toplevel(self.root)
         win.title(f"Add {table_name} Record")
 
@@ -148,6 +149,7 @@ class AppView:
         )
 
     def open_update_window(self, table_name: str, fields: list[str], current_values: dict, on_update):
+        """Opens a dialog window pre-filled with the current record values."""
         win = tk.Toplevel(self.root)
         win.title(f"Update {table_name} Record")
 
@@ -160,6 +162,52 @@ class AppView:
             entries[field] = entry
 
         tk.Button(win, text="Update", command=lambda: on_update({k: v.get() for k, v in entries.items()}, win)).grid(
+            row=len(fields), columnspan=2, pady=10
+        )
+
+    def open_flight_window(self, title: str, airline_options: list[str], fields: list[str],
+                           current_values: dict, on_save):
+        win = tk.Toplevel(self.root)
+        win.title(title)
+
+        entries = {}
+        for i, field in enumerate(fields):
+            tk.Label(win, text=field.replace("_", " ").title()).grid(row=i, column=0, padx=10, pady=5, sticky="e")
+            if field == "airline_id":
+                widget = ttk.Combobox(win, values=airline_options, state="readonly", width=28)
+                current = str(current_values.get("airline_id", ""))
+                matched = next((o for o in airline_options if o.startswith(current + " -")), "")
+                widget.set(matched)
+            elif field == "date":
+                widget = tk.Entry(win, width=30)
+                widget.insert(0, current_values.get("date", "YYYY-MM-DD"))
+            else:
+                widget = tk.Entry(win, width=30)
+                widget.insert(0, current_values.get(field, ""))
+            widget.grid(row=i, column=1, padx=10, pady=5)
+            entries[field] = widget
+
+        def collect():
+            data = {}
+            for k, v in entries.items():
+                if k == "airline_id":
+                    selected = v.get()
+                    if not selected:
+                        raise ValueError("Please select an airline.")
+                    data[k] = int(selected.split(" - ")[0])
+                elif k == "date":
+                    data[k] = v.get()
+                else:
+                    data[k] = v.get()
+            return data
+
+        def on_click():
+            try:
+                on_save(collect(), win)
+            except Exception as e:
+                messagebox.showerror("Error", str(e))
+
+        tk.Button(win, text="Save", command=on_click).grid(
             row=len(fields), columnspan=2, pady=10
         )
 
