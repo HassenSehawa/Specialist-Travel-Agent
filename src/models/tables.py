@@ -36,15 +36,6 @@ class BaseTable:
                 return record
         return None
 
-    def update_record(self, record_id: int, **kwargs) -> bool:
-        record = self.get_record(record_id)
-        if record is None:
-            return False
-        for key, value in kwargs.items():
-            if key in record:
-                record[key] = value
-        return True
-
     def delete_record(self, record_id: int) -> bool:
         for i, record in enumerate(self.records):
             if record["id"] == record_id:
@@ -116,6 +107,33 @@ class ClientTable(BaseTable):
             phone_number=phone_number,
         )
 
+    def update_record(self, record_id: int, name: str, address_line_1: str, address_line_2: str,
+                      address_line_3: str, city: str, state: str, zip_code: str,
+                      country: str, phone_number: str) -> dict:
+        if not name.strip():
+            raise ValueError("Name is required.")
+        if not city.strip():
+            raise ValueError("City is required.")
+        if not country.strip():
+            raise ValueError("Country is required.")
+        if not phone_number.strip():
+            raise ValueError("Phone number is required.")
+            
+        if not phone_number.strip().replace("+", "").replace(" ", "").isdigit():
+            raise ValueError("Phone number must contain digits only.")
+
+        return super().update_record(
+            record_id=record_id,
+            name=name,
+            address_line_1=address_line_1,
+            address_line_2=address_line_2,
+            address_line_3=address_line_3,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            country=country,
+            phone_number=phone_number,
+        )
 
 class AirlineTable(BaseTable):
     record_type = "Airline"
@@ -127,6 +145,14 @@ class AirlineTable(BaseTable):
             raise ValueError("Company name is required.")
         return super().add_record(company_name=company_name)
 
+    def update_record(self, record_id: int, company_name: str) -> dict:
+        if not company_name.strip():
+            raise ValueError("Company name is required.")
+        
+        return super().update_record(
+            record_id=record_id,
+            company_name=company_name
+        )
 
 class FlightTable(BaseTable):
     record_type = "Flight"
@@ -134,7 +160,7 @@ class FlightTable(BaseTable):
     fields = ["airline_id", "date", "start_city", "end_city"]
     required_fields = ["airline_id", "date", "start_city", "end_city"]
 
-    def add_record(self, airline_id: int, date: str, start_city: str, end_city: str) -> dict:
+    def add_record(self, airline_id: int, date: datetime, start_city: str, end_city: str) -> dict:
         if not isinstance(airline_id, int):
             raise ValueError("Airline ID must be a number.")
         if not start_city.strip():
@@ -142,12 +168,35 @@ class FlightTable(BaseTable):
         if not end_city.strip():
             raise ValueError("End city is required.")
         try:
-            datetime.strptime(date, self.DATE_FORMAT)
+            date = datetime.strptime(date, self.DATE_FORMAT).isoformat()
         except ValueError:
             raise ValueError(f"Date must be in {self.DATE_FORMAT} format.")
+        
+        
         return super().add_record(
             airline_id=airline_id,
             date=date,
+            start_city=start_city,
+            end_city=end_city,
+        )
+    
+    def update_record(self, record_id: int, airline_id: int, date: str, start_city: str, end_city: str) -> dict:
+        if not isinstance(airline_id, int):
+            raise ValueError("Airline ID must be a number.")
+        if not start_city.strip():
+            raise ValueError("Start city is required.")
+        if not end_city.strip():
+            raise ValueError("End city is required.")
+            
+        try:
+            formatted_date = datetime.strptime(date, self.DATE_FORMAT).isoformat()
+        except (ValueError, TypeError):
+            raise ValueError(f"Date must be in {self.DATE_FORMAT} format.")
+        
+        return super().update_record(
+            record_id=record_id,
+            airline_id=airline_id,
+            date=formatted_date,
             start_city=start_city,
             end_city=end_city,
         )
