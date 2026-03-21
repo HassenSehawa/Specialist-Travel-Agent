@@ -29,6 +29,20 @@ class BaseTable:
         record = {"id": self._next_id(), "type": self.record_type, **kwargs}
         self.records.append(record)
         return record
+    
+    def add_record(self, **kwargs) -> dict:
+        record = {"id": self._next_id(), "type": self.record_type, **kwargs}
+        self.records.append(record)
+        return record
+
+    def update_record(self, record_id: int, **kwargs) -> bool:
+        record = self.get_record(record_id)
+        if record is None:
+            return False
+        for key, value in kwargs.items():
+            if key in record:
+                record[key] = value
+        return True
 
     def get_record(self, record_id: int) -> dict | None:
         for record in self.records:
